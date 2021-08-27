@@ -1,0 +1,469 @@
+---
+output: 
+  html_document: 
+    toc: yes
+    toc_depth: 1
+    number_sections: yes
+    theme: united
+    highlight: tango
+    keep_md: yes
+---
+
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #EEEFF0;
+  text-align: left;
+  padding: 4px;
+}
+
+tr:nth-child(even) {
+  background-color: #EEEFF0;
+}
+
+.th-white {
+  border: 0px;
+}
+
+hr {
+  border-color: #EEEFF0;
+  margin: 1px;
+}
+
+p {
+  margin-bottom:15px;
+  margin-top:15px;
+}
+
+ol, ul {
+  padding-inline-start: 15px;
+}
+
+h5 {
+  margin-top: 30px;
+}
+
+li {
+  color: black;
+}
+
+a {
+  font-size: 16px;
+}
+
+h1 {
+    font-size: 20px;
+}
+
+div.fixed {
+    position: relative;
+    width: 100%;
+    background-color: #eeeff0;
+    text-align: center;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    margin-bottom: 10px;
+    font-size: 10px;
+    margin-top: 10px;
+}
+
+.a-sub {
+  text-decoration: underline;
+  line-height: 1.42857143;
+  color: #333333;
+  font-size: 10px;
+}
+
+.a-sub:hover, a:focus {
+  color: black;
+  text-decoration: underline;
+}
+
+.h5-sub {
+  margin-top: 0px;
+}
+
+.li-sub {
+    margin-left: 15px;
+}
+
+.ol-sub {
+  list-style-type: circle;
+}
+
+.p.sub {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#TOC {
+  position: fixed !important;
+  margin-top: 30px !important;
+}
+
+#CONTAINER {
+  flex: 1;
+  margin-left: 200px;
+}
+
+</style>
+
+<div id="CONTAINER">
+
+<p></p>
+
+<table>
+  <tr>
+    <th class="th-white" style="width: 120px">
+      <img src="https://www.mackenzie.br/fileadmin/user_upload/brasao_95.png" alt="Logotipo do Mackenzie" style="height: 130px">
+    </th>
+    <th class="th-white">
+        <h4>Explorando a base de dados DIAMONDS do pacote GGPLOT2</h4>
+        <h5 class="h5-sub">Atividade de aprofundamento - Trilha #03</h5>
+        <h6>Nome: Eric Garcia de Campos<br>
+        TIA: 92103960<br>
+        Curso: Pós-graduação em Big Data<br>
+        Turma: 01S</h6>
+    </th>
+  </tr>
+</table>
+
+<p></p><hr><p></p>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<p></p><p></p>
+
+# Introdução
+
+Diamonds é uma base de dados que contém os preços e outros atributos de quase 54.000 diamantes. De fato, são 53940 linhas e 10 variáveis, mostradas a seguir:
+
+<p>
+
+<table>
+  
+  <tr>
+    <th>Variável</th>
+    <th>Descrição</th>
+  </tr>
+  
+  <tr>
+    <td>price</td>
+    <td>preço em dólares americanos ($326--$18,823)</td>
+  </tr>
+  
+  <tr>
+    <td>carat</td>
+    <td>peso do diamente (0.2--5.01)</td>
+  </tr>
+  
+  <tr>
+    <td>cut</td>
+    <td>qualidade do corte (Fair, Good, Very Good, Premium, Ideal)</td>
+  </tr>
+  
+  <tr>
+    <td>color</td>
+    <td>cor do diamante, indo de J (pior) a D (melhor)</td>
+  </tr>
+  
+  <tr>
+    <td>clarity</td>
+    <td>medida de quão claro é o diamante (I1 (pior), SI2, SI1, VS2, VS1, VVS2, VVS1, IF (melhor))</td>
+  </tr>
+
+  <tr>
+    <td>x</td>
+    <td>comprimento em mm (0--10.74)</td>
+  </tr>
+  
+  <tr>
+    <td>y</td>
+    <td>largura em mm (0--58.9)</td>
+  </tr>
+  
+  <tr>
+    <td>z</td>
+    <td>profundidade em mm (0--31.8)</td>
+  </tr>
+  
+  <tr>
+    <td>depth</td>
+    <td>percentual de profundidade total = z / mean(x, y) = 2 * z / (x + y) (43--79)</td>
+  </tr>
+  
+  <tr>
+    <td>table</td>
+    <td>table	largura do topo do diamante relativo ao ponto mais largo (43--95)</td>
+  </tr>  
+
+</table>
+
+</p>
+
+<p>A leitura dos dados pode ser feita com o comando abaixo:</p>
+
+```{r}
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+data(diamonds)
+diamantes <- diamonds
+```
+
+<p></p><p></p>
+
+# Resolução
+
+Após carregar a base de dados no R, vamos a algumas explorações:
+
+<p>
+1. Qual é a estrutura do conjunto de dados “diamantes”?
+</p>
+
+```{r}
+str(diamantes)
+```
+
+<p>
+2. Explore a parte inicial e a final do conjunto de dados.
+</p>
+
+```{r}
+head(diamantes)
+tail(diamantes)
+```
+
+<p>
+3. Faça alguns sumários estatísticos para entender melhor a base de dados.
+</p>
+
+```{r}
+summary(diamantes)
+dim(diamantes) #total de linhas x colunas
+```
+
+<p>
+4. A saída da função summary() está de acordo com a descrição mostrada anteriormente?
+
+<ol class="ol-sub">
+  <li class="li-sub">Os atributos carat, cut, color, x, y, z e table estão de acordo com a descrição mostrada anteriormente.</li>
+  <li class="li-sub">O atributo depth na descrição mostrada tem variação de 43-95, entretanto no banco de dados “diamantes” essa variação vai de 43-79.</li>
+  <li class="li-sub">O comando summary não exibiu todos os valores de clarity. Sendo assim, fez-se necessária a execução do comando "distinct" para que pudéssemos identificar todos os possíveis valores desse atributo, e conforme abaixo, também está idêntico ao da descrição mostrada.</li>
+  <li class="li-sub">Valores possíveis da descrição mostrada: I1, SI2, SI1, VS2, VS1, VVS2, VVS1, IF)</li>
+  <li class="li-sub">Valores possíveis no banco de dados “diamantes”, conforme execução do comando "distinct" abaixo:</li>
+</ol>
+
+</p>
+
+```{r}
+distinct_diamantes = diamantes %>% distinct(clarity) %>% select(clarity)
+distinct_diamantes
+```
+
+<p>
+5. Explore a variável price, seguindo o modelo de exploração.
+</p>
+
+```{r}
+summary(diamantes$price)
+quantile(diamantes$price, seq(0, 1, 0.1))
+quantile(diamantes$price, seq(0, 1, 0.25))
+```
+
+<p>
+6. Veja a distribuição da variável (histograma); observe a faixa de valores da variável price.
+</p>
+
+<p>
+Histograma (price):
+</p>
+
+```{r}
+ggplot(diamantes, aes(price)) + 
+  geom_histogram(bins=30) + 
+  labs_pubr() + 
+  labs(caption = "Fonte: Elaborado por Eric Garcia de Campos") +
+  theme_pubclean() 
+```
+
+<p>
+7. Explore também as variáveis carat, cut, color, clarity, x, y, z, depth e table, seguindo o modelo de exploração.
+</p>	
+
+<p>
+Histograma (carat):
+</p>
+
+```{r}
+ggplot(diamantes, aes(carat)) + 
+  geom_histogram(bins=30) + 
+  labs_pubr() + 
+  labs(caption = "Fonte: Elaborado por Eric Garcia de Campos") +
+  theme_pubclean() 
+```
+
+<p>
+Histograma (x):
+</p>
+
+```{r}
+ggplot(diamantes, aes(x)) + 
+  geom_histogram(bins=30) + 
+  labs_pubr() + 
+  labs(caption = "Fonte: Elaborado por Eric Garcia de Campos") +
+  theme_pubclean() 
+```
+
+<p>
+Histograma (y):
+</p>
+
+```{r}
+ggplot(diamantes, aes(y)) + 
+  geom_histogram(bins=30) + 
+  labs_pubr() + 
+  labs(caption = "Fonte: Elaborado por Eric Garcia de Campos") +
+  theme_pubclean() 
+```
+
+<p>
+Histograma (z):
+</p>
+
+```{r}
+ggplot(diamantes, aes(z)) + 
+  geom_histogram(bins=30) + 
+  labs_pubr() + 
+  labs(caption = "Fonte: Elaborado por Eric Garcia de Campos") +
+  theme_pubclean() 
+```
+
+<p>
+Histograma (depth):
+</p>
+
+```{r}
+ggplot(diamantes, aes(depth)) + 
+  geom_histogram(bins=30) + 
+  labs_pubr() + 
+  labs(caption = "Fonte: Elaborado por Eric Garcia de Campos") +
+  theme_pubclean() 
+```
+
+<p>
+Histograma (table):
+</p>
+
+```{r}
+ggplot(diamantes, aes(table)) + 
+  geom_histogram(bins=30) + 
+  labs_pubr() + 
+  labs(caption = "Fonte: Elaborado por Eric Garcia de Campos") +
+  theme_pubclean() 
+```
+
+<p>
+Gráfico de barras (cut):
+</p>
+
+```{r}
+ggplot(diamantes) + geom_bar(aes(x = cut), stat = "count", fill = "wheat", color = "black") + 
+  labs(y = "Quantidade", caption = "Fonte: Elaborado por Eric Garcia de Campos", x = "") + 
+  labs_pubr() + 
+  theme_pubr() + theme(plot.caption = element_text(hjust = 0))
+```
+
+<p>
+Gráfico de barras (color):
+</p>
+
+```{r}
+ggplot(diamantes) + geom_bar(aes(x = color), stat = "count", fill = "wheat", color = "black") + 
+  labs(y = "Quantidade", caption = "Fonte: Elaborado por Eric Garcia de Campos", x = "") + 
+  labs_pubr() + 
+  theme_pubr() + theme(plot.caption = element_text(hjust = 0))
+```
+
+<p>
+Gráfico de barras (clarity):
+</p>
+
+```{r}
+ggplot(diamantes) + geom_bar(aes(x = clarity), stat = "count", fill = "wheat", color = "black") + 
+  labs(y = "Quantidade", caption = "Fonte: Elaborado por Eric Garcia de Campos", x = "") + 
+  labs_pubr() + 
+  theme_pubr() + theme(plot.caption = element_text(hjust = 0))
+```
+
+<p>
+7. Crie boxplots para as variáveis numéricas; veja se existem dados anormais (outliers).
+</p>
+
+<p>
+Boxplot (price):
+</p>
+
+```{r}
+ggplot(data = diamantes) + 
+  geom_boxplot(aes(x = "identity", y = price), width = 0.3, varwidth = F) + 
+  labs(y = "Nível", x = "Price", caption = "Fonte: Elaborado por Eric Garcia de Campos") + 
+  geom_abline(slope = 0, intercept = mean(diamantes$price), color = "red", show.legend = YES) +
+  scale_x_discrete(labels = NULL, breaks = NULL) + 
+  labs_pubr() + theme_pubr() + 
+  theme(plot.caption = element_text(hjust = 0))
+```
+
+<p>
+Boxplot (carat):
+</p>
+
+```{r}
+ggplot(data = diamantes) + 
+  geom_boxplot(aes(x = "identity", y = carat), width = 0.3, varwidth = F) + 
+  labs(y = "Nível", x = "Peso do diamante", caption = "Fonte: Elaborado por Eric Garcia de Campos") + 
+  geom_abline(slope = 0, intercept = mean(diamantes$carat), color = "red", show.legend = YES) +
+  scale_x_discrete(labels = NULL, breaks = NULL) + 
+  labs_pubr() + theme_pubr() + 
+  theme(plot.caption = element_text(hjust = 0))
+```
+
+<p>
+8. Utilize as variáveis categóricas para fazer o facetamento dos dados, mostrando alguns gráficos com 2 ou mais variáveis contínuas lado a lado.
+</p>
+
+<p></p><p></p>
+
+# Conclusão
+
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+<p>Pendente</p>
+
+</div>
+
+<div class="fixed">
+  <p class="p.sub">All rights reserved (todos os direitos reservados). 
+  Utilize o <a class="a-sub" href="">link</a> para acessar o código dessa página desenvolvida em linguagem "R".</p>
+</div>
